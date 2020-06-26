@@ -67,12 +67,14 @@ const getProjectBucket = async (project, env, config) => {
       if (error) {
         reject(error)
       } else {
+        console.log("BUCKETS BUCKETS 00 =?> ", project);
         const buckets = data.Buckets.filter((bucket) => {
           return bucket.Name.indexOf(project) > -1 &&
             bucket.Name.indexOf(env) > -1
         })
         if (buckets.length > 0) {
-          resolve(buckets[0].Name)
+          console.log("BUCKETS BUCKETS =?> ", buckets);
+          resolve(buckets[1].Name)
         } else {
           resolve(null)
         }

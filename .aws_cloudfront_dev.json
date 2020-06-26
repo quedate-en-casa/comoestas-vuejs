@@ -1,4 +1,5 @@
 {
-  "bucketName": null,
+  "bucketName": "s3-comoestas-dev",
+  "distributionId": "E2MTHT86WYFHT7",
   "profile": "karibu"
 }

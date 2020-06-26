@@ -55,10 +55,7 @@ gulp.task('configure', (callback) => {
 gulp.task('generate', () => {
   log.info(`Generating application distribution for environment '${env}'`)
   return run(
-    path.join(__dirname,
-      'node_modules',
-      '.bin',
-      'nuxt generate')
+    'yarn build'
   ).exec()
 })
 
@@ -123,5 +120,5 @@ gulp.task('cloudfront', async () => {
   return g
 })
 
-gulp.task('deploy', gulp.series('choose', 'generate', 'cloudfront'))
+gulp.task('deploy', gulp.series('choose', 'generate','cloudfront'))
 
