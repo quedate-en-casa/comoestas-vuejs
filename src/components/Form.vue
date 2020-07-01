@@ -3,12 +3,15 @@
     <div class="columns is-multiline">
       <div class="column is-6">
         <div class="field">
-          <label class="label">Hospital:</label>
+          <label class="label">RUT Doctor:</label>
           <div class="control">
-            <input class="input" type="text" v-model="patientRegister.hospital" placeholder="Ingrese Hospital">
+            <input class="input" :class="isDniValid(patientRegister.doctorRut)" @keyup="isDniValid(patientRegister.doctorRut)=='' && patientRegister.doctorRut!=''? validateDoctor() :''" type="text" v-model="patientRegister.doctorRut"
+              placeholder="Ingrese su nombre">
+            <p v-if="!doctorIsAuth" class="help is-danger">Este rut no esta autorizado para registrar progreso</p>
           </div>
         </div>
       </div>
+
       <div class="column is-6">
         <div class="field">
           <label class="label">Doctor:</label>
@@ -17,12 +20,31 @@
           </div>
         </div>
       </div>
-
+      
+      <div class="column is-6">
+        <div class="field">
+          <label class="label">Hospital:</label>
+          <div class="control">
+            <input class="input" type="text" v-model="patientRegister.hospital" placeholder="Ingrese Hospital">
+          </div>
+        </div>
+      </div>
+      
       <div class="column is-6">
         <div class="field">
           <label class="label">RUT Paciente:</label>
           <div class="control">
             <input class="input" type="text" v-model="patientRegister.rut" placeholder="Ingrese RUT del paciente">
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-6">
+        <div class="field">
+          <label class="label">Nombre Paciente:</label>
+          <div class="control">
+            <input class="input" type="text" v-model="patientRegister.namePatient"
+              placeholder="Ingrese nombre del paciente">
           </div>
         </div>
       </div>
@@ -45,7 +67,8 @@
         <div class="field">
           <label class="label">Comentario</label>
           <div class="control">
-            <textarea class="textarea" v-model="patientRegister.doctorComments" placeholder="Agregue un comentario para los familiares"></textarea>
+            <textarea class="textarea" v-model="patientRegister.doctorComments"
+              placeholder="Agregue un comentario para los familiares"></textarea>
           </div>
         </div>
       </div>
@@ -56,32 +79,59 @@
             <button class="button is-link is-light">Cancelar registro</button>
           </div>
           <div class="control">
-            <button @click="sendData()" class="button is-link">Enviar datos</button>
+            <button :disabled="!doctorIsAuth" @click="doctorIsAuth && sendData()" class="button is-link">Enviar datos</button>
           </div>
           <br>
         </div>
       </div>
       <div class="column is-12">
-          <div class="notification is-success is-light" v-if="responseMessage">
-              <button class="delete"></button>
-              {{responseMessage}}
-          </div>
+        <div class="notification is-success is-light" v-if="responseMessage">
+          <button class="delete"></button>
+          {{responseMessage}}
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {PatientService} from '../../services/patient';
+  import {
+    PatientService
+  } from '../../services/patient';
+  import isDniValid from '../../utils/isDniValid.js'
   export default {
     name: 'Form',
     data() {
       return {
         patientRegister: {},
+        doctorIsAuth: false,
         responseMessage: undefined,
       }
     },
     methods: {
+      isDniValid,
+      validateDoctor() {
+        if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+        }
+        this.timer = setTimeout(() => {
+          let service = new PatientService();
+          service.consultDoctorById(this.patientRegister.doctorRut)
+            .then(result => {
+              if (result.doctor!=undefined) {
+                console.log("esta habilitado para guardar gente");
+                this.doctorIsAuth = true;
+                this.patientRegister.doctor = result.doctor.fullName;
+                this.patientRegister.hospital = result.doctor.hospital;
+              }
+            }).catch(err => {
+              this.doctorIsAuth = false;
+              console.log("NO esta habilitado para guardar gente: ", err);
+            })
+        }, 800);
+      },
+
       sendData() {
         console.log("Enviando datos a api gateway", this.patientRegister);
         let service = new PatientService();

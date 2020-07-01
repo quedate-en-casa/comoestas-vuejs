@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="container pl-5 pr-5">
     <div class="is-absolute">
       <label class="checkbox">
         <input type="checkbox" v-model="view">

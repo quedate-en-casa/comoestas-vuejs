@@ -35,7 +35,7 @@
                     <header class="card-header">
                         <p class="card-header-title">
                             <span>
-                                Estado del paciente
+                                Estado del paciente: {{patientName}}
                             </span>
                         </p>
                     </header>
@@ -47,23 +47,20 @@
                                 <div class="notification columns mt-0" :class="resultConsultItem.status.includes('No')?'nok-b':'ok-b'">
                                     <div class="column">
                                         <p>
+                                            <b>Fecha:</b> {{ resultConsultItem.date | formatDate}}
+                                        </p>
+                                        <p>
                                             <b>Hospital:</b> {{resultConsultItem.hospital}}
                                         </p>
                                         <p>
                                             <b>Doctor:</b> {{resultConsultItem.doctor}}
                                         </p>
-                                    </div>
-                                    <div class="column">
                                         <p>
-                                            <b>Estatus:</b> <span :class="resultConsultItem.status.includes('No')?'nok':'ok'">{{resultConsultItem.status}}</span> 
+                                            <span class="fa" :class="resultConsultItem.status.includes('No')?'fa-times nok':'fa-check ok'"></span> 
+                                            <span>{{' ' + resultConsultItem.status}}</span>
                                         </p>
                                         <p>
                                             <b>Comentarios: </b> {{resultConsultItem.doctorComments}}
-                                        </p>
-                                    </div>
-                                    <div class="column">
-                                        <p>
-                                            <b>Fecha:</b> {{ resultConsultItem.date | formatDate}}
                                         </p>
                                     </div>
                                 </div>
@@ -89,7 +86,8 @@
             return {
                 rutPatient: undefined,
                 resultConsult: undefined,
-                errorMessage: undefined
+                errorMessage: undefined,
+                patientName: undefined,
             }
         },
         filters: {
@@ -102,6 +100,7 @@
                     if (result != undefined && result.data.registers.length!=0) {
                         this.errorMessage = undefined;
                         this.resultConsult = result.data.registers.sort((a, b) => (a.date < b.date) ? 1 : -1);
+                        this.patientName = this.resultConsult[0].namePatient;
                     } else {
                         this.errorMessage = "El paciente no esta registrado en nuestra base de datos.";
                     }
@@ -116,19 +115,20 @@
 
 
     .ok-b {
-        border: 1px solid rgba(41, 200, 29, 0.63);
+        box-shadow: 1px 1px 5px 1px grey;
+        
     }
 
     .nok-b {
-        border: 1px solid rgba(150, 29, 29, 0.63);
+        box-shadow: 1px 1px 5px 1px grey;
+        
     }
     .ok {
-        background: rgba(41, 200, 29, 0.63);
+        color: rgba(41, 200, 29, 0.63);
     }
 
     .nok {
-        color: #FFF;
-        background: rgba(150, 29, 29, 0.63);
+        color: rgba(150, 29, 29, 0.63);
     }
 
     h3 {
