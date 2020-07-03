@@ -1,9 +1,9 @@
 module.exports = {
     register: {
         endpoints: {
-            createWithRut: '/api/register',
-            getById: '/api/register',
-            getByRut: '/api/register'
+            createWithRut: '/api/record',
+            getById: '/api/record',
+            getByRut: '/api/record'
         }
     },
     doctor: {
