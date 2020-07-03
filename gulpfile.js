@@ -55,7 +55,7 @@ gulp.task('configure', (callback) => {
 gulp.task('generate', () => {
   log.info(`Generating application distribution for environment '${env}'`)
   return run(
-    'yarn build'
+    'cross-env CE_ENV=aws yarn build'
   ).exec()
 })
 
@@ -121,4 +121,11 @@ gulp.task('cloudfront', async () => {
 })
 
 gulp.task('deploy', gulp.series('choose', 'generate','cloudfront'))
+
+gulp.task('docker', () => {
+  log.info(`Generating application distribution for environment '${process.env.NODE_ENV}'`)
+  return run(
+    'cross-env CE_ENV=docker yarn build'
+  ).exec()
+})
 

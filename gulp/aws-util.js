@@ -10,7 +10,8 @@ const getFileLines = (path) => {
 
 const parseConfig = (path) => {
   if (!fs.existsSync(path)) {
-    throw new Error(`AWS CLI config file don't exists: '${path}'`)
+    console.warn(`AWS CLI config file don't exists: '${path}'`)
+    return {}
   }
   const config = {}
   const configLines = getFileLines(path)
@@ -34,7 +35,8 @@ const parseConfig = (path) => {
 
 const parseCredentials = (path) => {
   if (!fs.existsSync(path)) {
-    throw new Error(`AWS CLI credentials file not exists: '${path}'`)
+    console.warn(`AWS CLI config file don't exists: '${path}'`)
+    return {}
   }
   const credentials = {}
   const credentialsLines = getFileLines(path)
