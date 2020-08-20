@@ -7,7 +7,7 @@
           <div class="control">
             <input class="input" :class="isDniValid(patientRegister.doctorRut)" @keyup="isDniValid(patientRegister.doctorRut)=='' && patientRegister.doctorRut!=''? validateDoctor() :''" type="text" v-model="patientRegister.doctorRut"
               placeholder="Ingrese su nombre">
-            <p v-if="!doctorIsAuth" class="help is-danger">Este rut no esta autorizado para registrar progreso</p>
+            <p v-if="!doctorIsAuth && patientRegister.doctorRut!=''" class="help is-danger">Este rut no esta autorizado para registrar progreso</p>
           </div>
         </div>
       </div>
@@ -103,7 +103,9 @@
     name: 'Form',
     data() {
       return {
-        patientRegister: {},
+        patientRegister: {
+          doctorRut: '',
+        },
         doctorIsAuth: false,
         responseMessage: undefined,
       }
