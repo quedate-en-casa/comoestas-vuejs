@@ -5,9 +5,9 @@
         <div class="field">
           <label class="label">RUT Doctor:</label>
           <div class="control">
-            <input class="input" :class="isDniValid(patientRegister.doctorRut)" @keyup="isDniValid(patientRegister.doctorRut)=='' && patientRegister.doctorRut!=''? validateDoctor() :''" type="text" v-model="patientRegister.doctorRut"
-              placeholder="Ingrese su nombre">
-            <p v-if="!doctorIsAuth && patientRegister.doctorRut!=''" class="help is-danger">Este rut no esta autorizado para registrar progreso</p>
+            <input class="input" :class="isDniValid(doctorRut)" @keyup="isDniValid(doctorRut)=='' && doctorRut!=''? validateDoctor() : ''" type="text" v-model="doctorRut"
+              placeholder="Ingrese RUT del doctor">
+            <p v-if="!doctorIsAuth && doctorRut!=''" class="help is-danger">Este rut no esta autorizado para registrar progreso</p>
           </div>
         </div>
       </div>
@@ -34,7 +34,7 @@
         <div class="field">
           <label class="label">RUT Paciente:</label>
           <div class="control">
-            <input class="input" type="text" v-model="patientRegister.rut" placeholder="Ingrese RUT del paciente">
+            <input class="input" type="text" v-model="patientRut" placeholder="Ingrese RUT del paciente">
           </div>
         </div>
       </div>
@@ -99,27 +99,38 @@
     PatientService
   } from '../../services/patient';
   import isDniValid from '../../utils/isDniValid.js'
+  import formatRut from '../../utils/formatRut.js'
   export default {
     name: 'Form',
     data() {
       return {
-        patientRegister: {
-          doctorRut: '',
-        },
+        patientRegister: {},
+        doctorRut: '',
+        patientRut: '',
         doctorIsAuth: false,
         responseMessage: undefined,
       }
     },
+    watch: {
+      doctorRut(oldValue) {
+        this.doctorRut = this.formatRut(oldValue);
+      },
+      patientRut(oldValue) {
+        this.patientRut = this.formatRut(oldValue);
+      }
+    },
     methods: {
       isDniValid,
+      formatRut,
       validateDoctor() {
+        this.doctorIsAuth = false;
         if (this.timer) {
           clearTimeout(this.timer);
           this.timer = null;
         }
         this.timer = setTimeout(() => {
           let service = new PatientService();
-          service.consultDoctorById(this.patientRegister.doctorRut)
+          service.consultDoctorById(this.doctorRut)
             .then(result => {
               if (result.doctor!=undefined) {
                 console.log("esta habilitado para guardar gente");
@@ -135,11 +146,12 @@
       },
 
       sendData() {
+        this.patientRegister.rut = this.patientRut;
         console.log("Enviando datos a api gateway", this.patientRegister);
         let service = new PatientService();
         service.registerPatientStatus(this.patientRegister).then(result => {
           if (result.data.newUser != undefined) {
-            this.responseMessage = "Se a agregado su registro a nuestra base de datos."
+            this.responseMessage = "Se ha agregado su registro a nuestra base de datos."
           } else {
             this.responseMessage = "Hubo un error al agregar el registro a nuestra base de datos."
           }

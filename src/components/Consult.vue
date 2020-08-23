@@ -77,6 +77,7 @@
 
 <script>
     import formatDate from '../../utils/FormatDta'
+    import formatRut from '../../utils/formatRut.js'
     import {
         PatientService
     } from '../../services/patient/index.js';
@@ -90,10 +91,16 @@
                 patientName: undefined,
             }
         },
+        watch: {
+            rutPatient(oldValue) {
+                this.rutPatient = this.formatRut(oldValue);
+            }
+        },
         filters: {
             formatDate,
         },
         methods: {
+            formatRut,
             getStatusPatient() {
                 let service = new PatientService();
                 service.consultPatientStatusByRut(this.rutPatient).then(result => {
